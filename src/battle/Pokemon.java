@@ -38,6 +38,10 @@ public class Pokemon {
 		return HPcur;
 	}
 	
+	public void setCurrentHP(int x) {
+		HPcur = x;
+	}
+	
 	public void dmgReceived(int dmg) {
 		this.HPcur -= dmg;
 		if(this.HPcur <=0){
@@ -165,10 +169,10 @@ public class Pokemon {
 
 	public String getAdvString(double i) {
 		if (i==0.5){
-			return "It's not very effective...";
+			return "It's not very effective...\n";
 		}
 		if (i==2) {
-			return "It's super effective!";
+			return "It's super effective!\n";
 		}
 		else return "";
 	}

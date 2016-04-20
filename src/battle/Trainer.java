@@ -5,13 +5,14 @@ public class Trainer {
 	private Pokemon[] team = new Pokemon[6];
 	private Item[] bag = new Item[5];
 	private int PA; //Pokemon ativo na batalha
+	private boolean defeated = false;
 	
 	public Trainer(String name, Pokemon[] t, Item[] b){
 		this.name = name;
-		for(int i=0; (t[i]!=null)&&(i<6); i++){
+		for(int i = 0; i != t.length; i++){
 			team[i] = t[i];
 		}
-		for(int i=0; (b[i]!=null)&&(i<5); i++){
+		for(int i = 0; i != b.length; i++){
 			bag[i] = b[i];
 		}
 	}
@@ -34,15 +35,21 @@ public class Trainer {
 	
 	public boolean nextPA() {
 		for(int i = 0; i < 6; i++) {
-			if(!team[i].getFainted()){
+			if(!team[i].getFainted() && i != PA){
 				PA = i;
 				return true;
 			}
 		}
+		defeated = true;
 		return false;
 	}
 	
 	public String getName(){
 		return name;
 	}
+	
+	public boolean defeated(){
+		return defeated;
+	}
+	
 }

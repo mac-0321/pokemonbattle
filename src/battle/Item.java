@@ -5,6 +5,9 @@ public class Item {
 	public Item(String nome) {
 		this.nome = nome;
 	}
+	public String nome(){
+		return nome;
+	}
 }
 
 class Pokeball extends Item {
@@ -23,5 +26,14 @@ class Potion extends Item {
 	public Potion (String nome, int HP) {
 		super(nome);
 		healedHP = HP;
+	}
+	public int healingHP (Potion potion, Pokemon p) {
+		p.setCurrentHP(p.getCurrentHP() + potion.healedHP);
+		int restoredHP = potion.healedHP;
+		if (p.getCurrentHP() > p.getHP()) {
+			restoredHP = p.getHP() + potion.healedHP - p.getCurrentHP();
+			p.setCurrentHP(p.getHP());
+		}
+		return restoredHP;
 	}
 }

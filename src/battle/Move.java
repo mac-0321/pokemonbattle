@@ -21,4 +21,8 @@ public class Move {
 	public boolean getPri() {
 		return priority;
 	}
+	
+	public String getMove() {
+		return name;
+	}
 }
