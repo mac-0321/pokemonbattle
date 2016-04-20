@@ -1,7 +1,6 @@
 package battle;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class BattleControls extends Controller {
 	private Pokemon Char = new Charizard();
@@ -16,7 +15,6 @@ public class BattleControls extends Controller {
 	private Pokemon Arc = new Arcanine();
 	private Pokemon Gya = new Gyarados();
 	private Pokemon Drag = new Dragonite();
-	private String message;
 	private Pokemon[] teamRed = {Char, Bla, Venu, Pika, Lap, Snor};
 	private Pokemon[] teamGary = {Pid, Ala, Rhy, Arc, Gya, Drag};
 	private Potion hpotion = new Potion("Hyper Potion", 200);
@@ -39,7 +37,7 @@ public class BattleControls extends Controller {
 		}
 		public String description() {
 			if(!nextPokemon){
-				return P1.getName() + " defeated " + P2.getName() + "!\n" + P1.getName() + "got $2000 for winning!";
+				return P2.getName() + " defeated " + P1.getName() + "!\n" + P2.getName() + " got $2000 for winning!";
 			}
 			else{
 				return P1.getName() + " sent out " + P1.getTeamMember(P1.getPA()).getName() + "!\n";
@@ -93,6 +91,7 @@ public class BattleControls extends Controller {
 		Trainer ATK;
 		Trainer DEF;
 		int i;
+		int damage;
 		public Fight(long eventTime, Trainer P1, Trainer P2, int move) {
 			super(eventTime);
 			ATK = P1;
@@ -100,161 +99,127 @@ public class BattleControls extends Controller {
 			i = move;
 		}
 		public void action() {
-			/*if((DEF.getTeamMember(DEF.getPA()).moves[j].getPri()) && (ATK.getTeamMember(ATK.getPA()).moves[i].getPri())) {
-				if(ATK.getTeamMember(ATK.getPA()).getSpeed() < DEF.getTeamMember(DEF.getPA()).getSpeed()) {
-					Trainer Temp = ATK;
-					ATK = DEF;
-					DEF = Temp;
-					int temp = i;
-					i = j;
-					j = temp;
-				}
-			}
-			else if(DEF.getTeamMember(DEF.getPA()).moves[j].getPri()){
-				Trainer Temp = ATK;
-				ATK = DEF;
-				DEF = Temp;
-				int temp = i;
-				i = j;
-				j = temp;
-			}
-			else if(ATK.getTeamMember(ATK.getPA()).getSpeed() < DEF.getTeamMember(DEF.getPA()).getSpeed()) {
-				Trainer Temp = ATK;
-				ATK = DEF;
-				DEF = Temp;
-				int temp = i;
-				i = j;
-				j = temp;
-			}*/
-			if(ATK.getTeamMember(ATK.getPA()).getFainted() == false){
-				int damage = (int) ATK.getTeamMember(ATK.getPA()).moves[i].DamageCalculate(ATK.getTeamMember(ATK.getPA()).getAtt(), ATK.getTeamMember(ATK.getPA()).getDef(),
+			if(ATK.getTeamMember(ATK.getPA()).getFainted() == false && DEF.getTeamMember(DEF.getPA()).getFainted() == false){
+				damage = (int) ATK.getTeamMember(ATK.getPA()).moves[i].DamageCalculate(ATK.getTeamMember(ATK.getPA()).getAtt(), ATK.getTeamMember(ATK.getPA()).getDef(),
 								ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));
 				
 				DEF.getTeamMember(DEF.getPA()).dmgReceived((int)damage);
 				
-				message = ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
-						  "!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));
+				/*message = ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
+						  "!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));*/
 			}
 			if(DEF.getTeamMember(DEF.getPA()).getFainted()) {
-				message += DEF.getTeamMember(DEF.getPA()).getName() + " fainted!";
+				//message += DEF.getTeamMember(DEF.getPA()).getName() + " fainted!";
 				addEvent(new SwitchPKMN(System.currentTimeMillis() + 2000, DEF, ATK));
 			}
 		}
 		public String description() {
-			return message;
+			if(ATK.getTeamMember(ATK.getPA()).getFainted() == false && DEF.getTeamMember(DEF.getPA()).getFainted() == false){
+				return ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
+						"!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));
+			}
+			else if(ATK.getTeamMember(ATK.getPA()).getFainted() == false && DEF.getTeamMember(DEF.getPA()).getFainted() == true){
+				return ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
+				"!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType())) + DEF.getTeamMember(DEF.getPA()).getName() + " fainted!";
+			}
+			else return "";
 		}
 	}
 	
-	/*public class BattleStarts extends Event {
-		long time = System.currentTimeMillis();
-		public BattleStarts (long eventTime){
-			super(eventTime);
-		}
-		public void action() {
-			Random gerador = new Random();
-			int option;
-			while(Red.getTeamMember(Red.getPA()).getFainted() == false) {
-				currentStatus(Red, Gary);
-				int RedMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Red
-				int GaryMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Gary
-				int GaryChoice = gerador.nextInt(100) + 1; //Se cair entre 1 e 85, Gary ataca (85% de chances de acontecer). 86 a 100, Gary usa pocao.
-				option = chooseEvent(Red);
-				if (GaryChoice <= 85 && option == 1) { //se Red e Gary decidirem atacar, ver qual pokemon e mais rapido
-					if((Red.getTeamMember(Red.getPA()).moves[RedMove].getPri() && Gary.getTeamMember(Gary.getPA()).moves[GaryMove].getPri()) || (!Red.getTeamMember(Red.getPA()).moves[RedMove].getPri() && !Gary.getTeamMember(Gary.getPA()).moves[GaryMove].getPri())) {
-						if(Red.getTeamMember(Red.getPA()).getSpeed() < Gary.getTeamMember(Gary.getPA()).getSpeed()){
-							addEvent(new Fight(time + milli, Gary, Red, GaryMove));
-							milli = setMillisec(milli);
-							addEvent(new Fight(time + milli, Red, Gary, RedMove));
-							milli = setMillisec(milli);
-						}
-						else {
-							addEvent(new Fight(time + milli, Red, Gary, RedMove));
-							milli = setMillisec(milli);
-							addEvent(new Fight(time + milli, Gary, Red, GaryMove));
-							milli = setMillisec(milli);
-						}
-					}
-					else if(Red.getTeamMember(Red.getPA()).moves[RedMove].getPri() && !Gary.getTeamMember(Gary.getPA()).moves[GaryMove].getPri()){
-						addEvent(new Fight(time + milli, Red, Gary, RedMove));
-						milli = setMillisec(milli);
-						addEvent(new Fight(time + milli, Gary, Red, GaryMove));
-						milli = setMillisec(milli);
-					}
-					else {
-						addEvent(new Fight(time + milli, Gary, Red, GaryMove));
-						milli = setMillisec(milli);
-						addEvent(new Fight(time + milli, Red, Gary, RedMove));
-						milli = setMillisec(milli);
-					}
-				}
-			}
-		}
-		public String description() {
-			return "Gary challenged to a battle!";
-		}
-	}
-	*/
 	public static void main(String[] args) throws InterruptedException {
 		BattleControls bc = new BattleControls();
-		long time = System.currentTimeMillis();
 		Random gerador = new Random();
-		int option;
+		int option = 0;
 		Scanner scan = new Scanner(System.in);
 		
-		while(bc.Red.getTeamMember(bc.Red.getPA()).getFainted() == false) {
+		while(bc.Red.getTeamMember(bc.Red.getPA()).getFainted() == false && bc.Gary.getTeamMember(bc.Gary.getPA()).getFainted() == false && option != 4) {
 			bc.currentStatus(bc.Red, bc.Gary);
 			int RedMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Red
 			int GaryMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Gary
-			int GaryChoice = gerador.nextInt(100) + 1; //Se cair entre 1 e 85, Gary ataca (85% de chances de acontecer). 86 a 100, Gary usa pocao.
-			Thread.sleep(1500);
+			int GaryChoice = gerador.nextInt(100) + 1; //Se cair entre 1 e 90, Gary ataca (90% de chances de acontecer). 90 a 100, Gary usa pocao.
+			Thread.sleep(500);
 			option = bc.chooseEvent(bc.Red, scan);
+			Thread.sleep(1000);
 
-			if (GaryChoice <= 85 && option == 1) { //se Red e Gary decidirem atacar, ver qual pokemon e mais rapido
+			if (GaryChoice <= 90 && option == 1) { //se Red e Gary decidirem atacar, ver qual pokemon e mais rapido
 				if((bc.Red.getTeamMember(bc.Red.getPA()).moves[RedMove].getPri() == bc.Gary.getTeamMember(bc.Gary.getPA()).moves[GaryMove].getPri())) {
 					if(bc.Red.getTeamMember(bc.Red.getPA()).getSpeed() < bc.Gary.getTeamMember(bc.Gary.getPA()).getSpeed()){
-						bc.addEvent(bc.new Fight(time + 1000, bc.Gary, bc.Red, GaryMove));
-						bc.addEvent(bc.new Fight(time + 2000, bc.Red, bc.Gary, RedMove));
+						bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Gary, bc.Red, GaryMove));
+						bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Red, bc.Gary, RedMove));
 						bc.run();
-						Thread.sleep(2000);
+						Thread.sleep(1500);
 					}
 					else {
-						bc.addEvent(bc.new Fight(time + 1000, bc.Red, bc.Gary, RedMove));
-						bc.addEvent(bc.new Fight(time + 2000, bc.Gary, bc.Red, GaryMove));
+						bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Gary, RedMove));
+						bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Gary, bc.Red, GaryMove));
 						bc.run();
-						Thread.sleep(2000);
+						Thread.sleep(1500);
 					}
 				}
 				else if(bc.Red.getTeamMember(bc.Red.getPA()).moves[RedMove].getPri() == true && bc.Gary.getTeamMember(bc.Gary.getPA()).moves[GaryMove].getPri() == false){
-					bc.addEvent(bc.new Fight(time + 1000, bc.Red, bc.Gary, RedMove));
-					bc.addEvent(bc.new Fight(time + 2000, bc.Gary, bc.Red, GaryMove));
+					bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Gary, RedMove));
+					bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Gary, bc.Red, GaryMove));
 					bc.run();
-					Thread.sleep(2000);
+					Thread.sleep(1500);
 				}
 				else {
-					bc.addEvent(bc.new Fight(time + 2000, bc.Gary, bc.Red, GaryMove));
-					bc.addEvent(bc.new Fight(time + 1000, bc.Red, bc.Gary, RedMove));
+					bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Gary, bc.Red, GaryMove));
+					bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Red, bc.Gary, RedMove));
 					bc.run();
-					Thread.sleep(2000);
+					Thread.sleep(1500);
 				}
 			}
-			else if (GaryChoice <= 85 && option == 2) {
-				bc.addEvent(bc.new SwitchPKMN(time, bc.Red, bc.Gary));
-				bc.addEvent(bc.new Fight(time + 2000, bc.Gary, bc.Red, GaryMove));
+			else if (GaryChoice <= 90 && option == 2) {
+				bc.addEvent(bc.new SwitchPKMN(System.currentTimeMillis(), bc.Red, bc.Gary));
+				bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Gary, bc.Red, GaryMove));
 				bc.run();
-				Thread.sleep(2000);
+				Thread.sleep(1500);
 			}
-			else if (GaryChoice <= 85 && option == 3) {
+			else if (GaryChoice <= 90 && option == 3) {
 				bc.showPotionOptions();
 				int pot = scan.nextInt();
 				if (pot == 1) {
-					bc.addEvent(bc.new HealPokemon(time, bc.Red, bc.spotion));
+					bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.spotion));
 				}
 				else {
-					bc.addEvent(bc.new HealPokemon(time, bc.Red, bc.hpotion));
+					bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.hpotion));
 				}
-				bc.addEvent(bc.new Fight(time + 2000, bc.Gary, bc.Red, GaryMove));
+				bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Gary, bc.Red, GaryMove));
 				bc.run();
-				Thread.sleep(2000);
+				Thread.sleep(1500);
+			}
+			else if (GaryChoice > 90 && option == 1) {
+				bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Gary, bc.spotion));
+				bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Red, bc.Gary, GaryMove));
+				bc.run();
+				Thread.sleep(1500);
+			}
+			else if (GaryChoice > 90 && option == 2) {
+				bc.addEvent(bc.new SwitchPKMN(System.currentTimeMillis(), bc.Red, bc.Gary));
+				bc.addEvent(bc.new HealPokemon((System.currentTimeMillis() + 1500), bc.Gary, bc.spotion));
+				bc.run();
+				Thread.sleep(1500);
+			}
+			else if (GaryChoice > 90 && option == 3) {
+				bc.showPotionOptions();
+				int pot = scan.nextInt();
+				if (pot == 1) {
+					bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.spotion));
+				}
+				else {
+					bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.hpotion));
+				}
+				bc.addEvent(bc.new HealPokemon((System.currentTimeMillis() + 1500), bc.Gary, bc.spotion));
+				bc.run();
+				Thread.sleep(1500);
+				
+			}
+			else if (option == 4) {
+				bc.addEvent(bc.new Run((System.currentTimeMillis() + 3000)));
+				bc.run();
+			}
+			else {
+				System.out.println("Oak's words echoed...\"There's a time and place for everything, but not now!\"");
 			}
 		}
 		
