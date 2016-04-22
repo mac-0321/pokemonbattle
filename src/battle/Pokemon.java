@@ -70,6 +70,10 @@ public class Pokemon {
 		return fainted;
 	}
 	
+	public void Fainted() {
+		fainted = true;
+	}
+	
 	public double getAdv(String enemyType){
 		if(type.equals("fire")){
 			if(enemyType.equals("fire")||enemyType.equals("water")||enemyType.equals("rock")||enemyType.equals("dragon")){
@@ -176,6 +180,10 @@ public class Pokemon {
 		}
 		else return "";
 	}
+	
+	public int getCatchRate() {
+		return catchRate;
+	}
 }
 
 //Red team: Charizard, Blastoise, Venusaur, Pikachu, Lapras, Snorlax
@@ -252,7 +260,7 @@ class Pidgeot extends Pokemon {
 
 class Alakazam extends Pokemon {
 	public Alakazam() {
-		super("Alakazam", 65, "psychic", 161, 186, 96, 171, 50);
+		super("Alakazam", 65, "psychic", 161, 176, 96, 171, 50);
 		moves[0] = new Move("Psychic", 90, false);
 		moves[1] = new Move("Submission", 80, false);
 		moves[2] = new Move("Tri Attack", 80, false);
