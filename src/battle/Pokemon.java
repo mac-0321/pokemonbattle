@@ -70,6 +70,10 @@ public class Pokemon {
 		return fainted;
 	}
 	
+	public void Fainted() {
+		fainted = true;
+	}
+	
 	public double getAdv(String enemyType){
 		if(type.equals("fire")){
 			if(enemyType.equals("fire")||enemyType.equals("water")||enemyType.equals("rock")||enemyType.equals("dragon")){
@@ -175,6 +179,10 @@ public class Pokemon {
 			return "It's super effective!\n";
 		}
 		else return "";
+	}
+	
+	public int getCatchRate() {
+		return catchRate;
 	}
 }
 
