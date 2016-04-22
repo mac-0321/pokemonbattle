@@ -1,5 +1,7 @@
 package battle;
 
+import java.util.Random;
+
 public class Item {
 	private String nome;
 	public Item(String nome) {
@@ -11,14 +13,54 @@ public class Item {
 }
 
 class Pokeball extends Item {
-	public Pokeball (String nome){
-		super(nome);
-	}
-	private Pokemon captured;
 	private String type;
 	private int M;
 	private int F;
-	private int N;
+	private int Ball;
+	private int B;
+	public Pokeball (String nome, String t){
+		super(nome);
+		this.type = t;
+	}
+	Random gerador = new Random();
+	public boolean catching (Pokemon p) {
+		if(type.equals("Master")) {
+			return true;
+		}
+		else if(type.equals("Poke")) {
+			M = gerador.nextInt(256);
+			Ball = 12;
+			B = 255;
+		}
+		else if(type.equals("Great")) {
+			M = gerador.nextInt(201);
+			Ball = 8;
+			B = 200;
+		}
+		F = (p.getHP() * 255 * 4)/(p.getCurrentHP() * Ball);
+		if (F < M) {
+			return false;
+		}
+		else return true;
+	}
+	public int getShake (Pokemon p) {
+		int D = (p.getCatchRate() * 100)/B;
+		int x;
+		if(D >= 256) {
+			return 3;
+		}
+		else x = (D * F)/255;
+		if(x < 10) {
+			return 0;
+		}
+		else if(x < 30) {
+			return 1;
+		}
+		else if(x < 70) {
+			return 2;
+		}
+		else return 3;
+	}
 }
 
 class Potion extends Item {
