@@ -1,6 +1,4 @@
 package battle;
-import java.util.Random;
-import java.util.Scanner;
 
 public class BattleControls extends Controller {
 	private Pokemon Char = new Charizard();
@@ -80,7 +78,6 @@ public class BattleControls extends Controller {
 		}
 		public void action() {
 			return;
-			//não sei o que botar aqui
 		}
 		public String description() {
 			return "Got away safely!";
@@ -105,18 +102,15 @@ public class BattleControls extends Controller {
 				
 				DEF.getTeamMember(DEF.getPA()).dmgReceived((int)damage);
 				
-				/*message = ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
-						  "!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));*/
 			}
 			if(DEF.getTeamMember(DEF.getPA()).getFainted()) {
-				//message += DEF.getTeamMember(DEF.getPA()).getName() + " fainted!";
 				addEvent(new SwitchPKMN(System.currentTimeMillis() + 2000, DEF, ATK));
 			}
 		}
 		public String description() {
 			if(ATK.getTeamMember(ATK.getPA()).getFainted() == false && DEF.getTeamMember(DEF.getPA()).getFainted() == false){
 				return ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
-						"!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));
+						"!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + " damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));
 			}
 			else if(ATK.getTeamMember(ATK.getPA()).getFainted() == false && DEF.getTeamMember(DEF.getPA()).getFainted() == true){
 				return ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
@@ -125,8 +119,100 @@ public class BattleControls extends Controller {
 			else return "";
 		}
 	}
-	
+
 	public static void main(String[] args) throws InterruptedException {
+		BattleControls bc = new BattleControls();
+		int moveIndexRed = 0;
+		int moveIndexGary = 0;
+		boolean runFromBattle = false;
+		int[] actionsRed = {1, 1, 1, 1, 2, 1, 1, 1, 1, 1/*charizard morre*/, 1, 1, 1, 1/*alakazam morre*/, 2, 1, 1, 1/*rhydon morre*/, 1, 1, 1, 2, 1, 1/*arcanine morre*/, 3, 1, 1, 1, 1/*gyarados morre*/, 1, 1, 1/*venusaur morre*/, 1, 1, 1/*blastoise morre*/, 3, 1, 1, 1, 1, 4};
+		int[] actionsGary = new int[100];
+		for (int i = 0; i < actionsGary.length; i++) {
+			actionsGary[i] = 1;
+			if (i % 10 == 0 && i != 0) actionsGary[i] = 2;
+			if (i == 37) actionsGary[i] = 2;
+		}
+			for (int i = 0; i < actionsRed.length && !runFromBattle && bc.Red.getTeamMember(bc.Red.getPA()).getFainted() == false && bc.Gary.getTeamMember(bc.Gary.getPA()).getFainted() == false; i++) {
+				bc.currentStatus(bc.Red, bc.Gary);
+				Thread.sleep(1500);
+				moveIndexRed = bc.changeMove(moveIndexRed);
+				moveIndexGary = bc.changeMove(moveIndexGary);
+				if (actionsRed[i] == actionsGary[i]) {
+					if(actionsRed[i] == 2){
+						bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.Red.getItem(0)));
+						bc.addEvent(bc.new HealPokemon(System.currentTimeMillis() + 1500, bc.Gary, bc.Gary.getItem(1)));
+					}
+					else {
+						if (bc.checkPriority(bc.Red.getTeamMember(bc.Red.getPA()).moves[moveIndexRed].getPri(), bc.Gary.getTeamMember(bc.Gary.getPA()).moves[moveIndexGary].getPri(), bc.Red.getTeamMember(bc.Red.getPA()).getSpeed(), bc.Gary.getTeamMember(bc.Gary.getPA()).getSpeed())){
+							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Gary, moveIndexRed));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Gary, bc.Red, moveIndexGary));
+						}
+						else {
+							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Gary, bc.Red, moveIndexGary));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Red, bc.Gary, moveIndexRed));
+						}
+					}
+				}
+				else if (actionsRed[i] < actionsGary[i]) {
+					if (i == 37){
+						bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Gary, bc.Gary.getItem(0)));
+						bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Red, bc.Gary, moveIndexRed));
+					}
+					else {
+						bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Gary, bc.Gary.getItem(1)));
+						bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Red, bc.Gary, moveIndexRed));
+					}
+					
+					
+				}
+				else if (actionsRed[i] > actionsGary[i]) {
+					switch(actionsRed[i]){
+					case 2:
+						bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.Red.getItem(0)));
+						bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Gary, bc.Red, moveIndexGary));
+						break;
+					case 3:
+						if (actionsGary[i] == 1) {
+							bc.addEvent(bc.new SwitchPKMN(System.currentTimeMillis(), bc.Red, bc.Gary));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Gary, bc.Red, moveIndexGary));
+						}
+						else {
+							bc.addEvent(bc.new SwitchPKMN(System.currentTimeMillis(), bc.Red, bc.Gary));
+							bc.addEvent(bc.new HealPokemon(System.currentTimeMillis() + 1500, bc.Gary, bc.Gary.getItem(1)));
+						}
+						break;
+					default:
+						bc.addEvent(bc.new Run((System.currentTimeMillis() + 2000)));
+						runFromBattle = true;
+						break;
+					}
+				}
+				bc.run();
+				Thread.sleep(2000);
+				System.out.println("***********************************************");
+			}
+		
+	}
+		
+	//retorna true se o pokemon de P1 for mais rapido ou tiver prioridade sobre o de P2
+	//retorna false caso contrario
+	public boolean checkPriority (boolean pri1, boolean pri2, int spd1, int spd2) {
+		if (pri1 == pri2) {
+			if(spd1 >= spd2) return true;
+			else return false;
+		}
+		else if (pri1 && !pri2) return true;
+		else return false;
+	}
+		
+	public int changeMove(int i) {
+		i++;
+		if (i == 4)
+			i = 0;
+		return i;
+	}
+	/*  			*****VERSAO 2 COM SCANNER - IGNORAR*****
+	 	public static void main(String[] args) throws InterruptedException {
 		BattleControls bc = new BattleControls();
 		Random gerador = new Random();
 		int option = 0;
@@ -226,13 +312,13 @@ public class BattleControls extends Controller {
 		scan.close();
 		bc.run();
 		
-	}
+	}*/
 	
 	public void currentStatus(Trainer P1, Trainer P2) {
 		System.out.println(P1.getName() + "\n" + "Active Pokemon: " + P1.getTeamMember(P1.getPA()).getName() + "\nHP: " + P1.getTeamMember(P1.getPA()).getCurrentHP() + "/" + P1.getTeamMember(P1.getPA()).getHP() + "\n");
 		System.out.println(P2.getName() + "\n" + "Active Pokemon: " + P2.getTeamMember(P2.getPA()).getName() + "\nHP: " + P2.getTeamMember(P2.getPA()).getCurrentHP() + "/" + P2.getTeamMember(P2.getPA()).getHP() + "\n");
 	}
-	
+/*			*****VERSAO 2 COM SCANNER - IGNORAR*****
 	public int chooseEvent(Trainer P1, Scanner scan) {
 		int opcao;
 		System.out.println("What will " + P1.getTeamMember(P1.getPA()).getName() + " do?");
@@ -245,5 +331,6 @@ public class BattleControls extends Controller {
 		System.out.println("Which item?\n");
 		System.out.println("1 - Super Potion: Recovers 50 HP\n2 - Hyper Potion - Recovers 200 HP");
 	}
+*/
 
 }

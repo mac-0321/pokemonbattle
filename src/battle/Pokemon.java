@@ -190,7 +190,7 @@ public class Pokemon {
 //Blue team: Pidgeot, Alakazam, Rhydon, Arcanine, Gyarados, Dragonite
 class Charizard extends Pokemon { 
 	public Charizard() {
-		super("Charizard", 6, "fire", 184, 136, 129, 151, 45);
+		super("Charizard", 6, "fire", 184, 146, 129, 151, 45);
 		moves[0] = new Move("Flamethrower", 95, false);
 		moves[1] = new Move("Mega Punch", 80, false);
 		moves[2] = new Move("Slash", 70, false);
@@ -260,7 +260,7 @@ class Pidgeot extends Pokemon {
 
 class Alakazam extends Pokemon {
 	public Alakazam() {
-		super("Alakazam", 65, "psychic", 161, 176, 96, 171, 50);
+		super("Alakazam", 65, "psychic", 161, 166, 86, 171, 50);
 		moves[0] = new Move("Psychic", 90, false);
 		moves[1] = new Move("Submission", 80, false);
 		moves[2] = new Move("Tri Attack", 80, false);
