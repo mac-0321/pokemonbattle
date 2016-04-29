@@ -5,7 +5,7 @@
 9344852 - Chanyee Kim
 
 Exercício 1:
-
+Executar a classe BattleControls para iniciar batalha
 - O programa consiste em uma simulação de batalha Pokémon. Cada treinador possui 6 Pokémons
 - O time do Red é: Charizard, Blastoise, Venusaur, Pikachu, Lapras e Snorlax
 - O time do Gary é: Pidgeot, Alakazam, Rhydon, Arcanine, Gyarados e Dragonite
@@ -20,3 +20,14 @@ Exercício 1:
 - Red usa apenas Hyper Potions quando seleciona o evento de curar o Pokémon. Gary usa Super Potions e 1 Hyper potion
 - A batalha termina quando não há mais Pokémons com vida ou quando Red decide fugir (na simulação, Red ganha a batalha, então o evento Run não é utilizado)
 - (Crédito Extra) Foi implementado o sistema de fraqueza baseado no tipo do Pokémon. A tabela de fraqueza pode ser conferida no site http://pokemondb.net/type
+
+Exercício 2:
+
+- O programa consiste em uma simulação do jogo Pokémon de forma simplificada. Seu treinador possui 6 Pokémons
+- Você escolhe uma das três opções: andar no chão comum, andar na grama, ou finalizar viagem(terminar programa)
+- Escolhendo opção de andar no chão comum, sempre aparecerá uma mesma mensagem avisando que nada aconteceu, pois a possibilidade de encontrar um Pokémon selvagem é 0
+- Caso escolha andar na grama, terá uma chance aleatória de aparecer um Pokémon selvagem e a batalha(Exercício 1) se inicia automaticamente
+- O Pokémon selvagem foi implementado como um treinador com um único Pokémon no seu time
+- (Crédito Extra) Nessa batalha, o treinador pode utilizar item e nos casos em que item utilizado é uma PokéBola, o Pokémon selvagem pode ser capturado(nesse caso, a batalha acaba), ou escapar
+- Existem 3 tipos de PokéBola: PokéBall, GreatBall, MasterBall
+- A fórmula da chance de captura é: f=(HPmax * 255 * 4)/(HPcur * B), que é comparado a um número M aleatório. A fórmula foi tirada do site bulbapedia.bulbagarden.net/wiki/Catch_rate 
