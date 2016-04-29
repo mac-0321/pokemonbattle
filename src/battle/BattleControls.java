@@ -126,7 +126,7 @@ public class BattleControls extends Controller {
 		int moveIndexGary = 0;
 		boolean runFromBattle = false;
 		int[] actionsRed = {1, 1, 1, 1, 2, 1, 1, 1, 1, 1/*charizard morre*/, 1, 1, 1, 1/*alakazam morre*/, 2, 1, 1, 1/*rhydon morre*/, 1, 1, 1, 2, 1, 1/*arcanine morre*/, 3, 1, 1, 1, 1/*gyarados morre*/, 1, 1, 1/*venusaur morre*/, 1, 1, 1/*blastoise morre*/, 3, 1, 1, 1, 1, 4};
-		int[] actionsGary = new int[100];
+		int[] actionsGary = new int[50];
 		for (int i = 0; i < actionsGary.length; i++) {
 			actionsGary[i] = 1;
 			if (i % 10 == 0 && i != 0) actionsGary[i] = 2;

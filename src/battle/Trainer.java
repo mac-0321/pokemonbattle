@@ -6,7 +6,6 @@ public class Trainer {
 	private Item[] bag = new Item[5];
 	private int PA; //Pokemon ativo na batalha
 	private boolean defeated = false;
-	private boolean encounter = false;
 	
 	public Trainer(String name, Pokemon[] t, Item[] b){
 		this.name = name;
@@ -16,14 +15,7 @@ public class Trainer {
 		for(int i = 0; i != b.length; i++){
 			bag[i] = b[i];
 		}
-	}
-	
-	public void encounter() {
-		encounter = true;
-	}
-	
-	public boolean getEncounter() {
-		return encounter;
+		PA = 0;
 	}
 	
 	public Pokemon getTeamMember(int i){
@@ -34,12 +26,12 @@ public class Trainer {
 		return bag[i];
 	}
 	
-	public void setPA(int i){
-		PA = i;
-	}
-	
 	public int getPA(){
 		return PA;
+	}
+	
+	public void setDefeated() {
+		defeated = true;
 	}
 	
 	public boolean nextPA() {

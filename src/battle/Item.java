@@ -17,7 +17,7 @@ class Pokeball extends Item {
 	private int M;
 	private int F;
 	private int Ball;
-	private int B;
+	private int B = 12;
 	public Pokeball (String nome, String t){
 		super(nome);
 		this.type = t;
@@ -25,15 +25,17 @@ class Pokeball extends Item {
 	Random gerador = new Random();
 	public boolean catching (Pokemon p) {
 		if(type.equals("Master")) {
+			Ball = 12;
+			B = 255;
 			return true;
 		}
 		else if(type.equals("Poke")) {
-			M = gerador.nextInt(256);
+			M = gerador.nextInt(400);
 			Ball = 12;
 			B = 255;
 		}
 		else if(type.equals("Great")) {
-			M = gerador.nextInt(201);
+			M = gerador.nextInt(300);
 			Ball = 8;
 			B = 200;
 		}

@@ -9,6 +9,12 @@ public class WildBattleControls extends Controller {
 	private Pokemon Pika = new Pikachu();
 	private Pokemon Lap = new Lapras();
 	private Pokemon Snor = new Snorlax();
+	private Pokemon WChar = new Charizard();
+	private Pokemon WBla = new Blastoise();
+	private Pokemon WVenu = new Venusaur();
+	private Pokemon WPika = new Pikachu();
+	private Pokemon WLap = new Lapras();
+	private Pokemon WSnor = new Snorlax();
 	private Pokemon Pid = new Pidgeot();
 	private Pokemon Ala = new Alakazam();
 	private Pokemon Rhy = new Rhydon();
@@ -16,7 +22,7 @@ public class WildBattleControls extends Controller {
 	private Pokemon Gya = new Gyarados();
 	private Pokemon Drag = new Dragonite();
 	private Pokemon[] teamRed = {Char, Bla, Venu, Pika, Lap, Snor};
-	private Pokemon[] PokemonList = {Char, Bla, Venu, Pika, Lap, Snor, Pid, Ala, Rhy, Arc, Gya, Drag};
+	private Pokemon[] PokemonList = {WChar, WBla, WVenu, WPika, WLap, WSnor, Pid, Ala, Rhy, Arc, Gya, Drag};
 	private Potion hpotion = new Potion("Hyper Potion", 200);
 	private Potion spotion = new Potion("Super Potion", 50);
 	private Pokeball pball = new Pokeball("Poke Ball", "Poke");
@@ -25,36 +31,38 @@ public class WildBattleControls extends Controller {
 	private Item[] itemList = {hpotion, spotion, pball, gball, mball};
 	private Trainer Red = new Trainer("Red", teamRed, itemList);
 	private Trainer Wild;
+	private boolean encounter;
 	
 	private class MapWalk extends Event {
-		Trainer wild;
 		Item[] itemList = {};
 		boolean bush;
 		Random gerador = new Random();
-		public MapWalk(long eventTime, int op, Pokemon[] list, Trainer wild){
+		public MapWalk(long eventTime, int op){
 			super(eventTime);
 			if(op==1) {
 				bush = false;
 			}
 			else bush = true;
-			int i = gerador.nextInt(12);
-			Pokemon[] wildPokemon = {list[i]};
-			wild = new Trainer("", wildPokemon, itemList);
-			this.wild = wild;
 		}
 		public void action() {
-			int x = gerador.nextInt(100);
+			int x = gerador.nextInt(10);
 			if(bush) {
-				if(x < 40) {
-					wild.encounter();
+				if(x > 2) {
+					int i = gerador.nextInt(12);
+					Pokemon[] wildPokemon = {PokemonList[i]};
+					while(wildPokemon[0].getFainted()){
+						i = gerador.nextInt(12);
+					}
+					Wild = new Trainer("", wildPokemon, itemList);
+					encounter = true;
 				}
 			}
 		}
 		public String description() {
-			if(wild.getEncounter()){
-				return "Wild " + wild.getTeamMember(0).getName() + " appeared!\n";
+			if(encounter){
+				return "Wild " + Wild.getTeamMember(0).getName() + " appeared!\n";
 			}
-			else return "...\n";
+			else return "Nothing happened...\n";
 		}
 	}
 	
@@ -68,7 +76,12 @@ public class WildBattleControls extends Controller {
 			this.P2 = P2;
 		}
 		public void action() {
-			nextPokemon = P1.nextPA();
+			if(P2.getName().equals("")){
+				nextPokemon = P1.nextPA();
+			}
+			else{
+				P2.setDefeated();
+			}
 		}
 		public String description() {
 			if(!nextPokemon){
@@ -116,13 +129,15 @@ public class WildBattleControls extends Controller {
 	
 	private class CatchPokemon extends Event {
 		Pokemon wild;
+		Trainer P1;
 		Pokeball ball;
 		int shakeTime;
 		boolean caught;
-		public CatchPokemon(long eventTime, Item b, Trainer P2){
+		public CatchPokemon(long eventTime, Item b, Trainer P1, Trainer P2){
 			super(eventTime);
 			this.ball = (Pokeball) b;
 			this.wild = P2.getTeamMember(0);
+			this.P1 = P1;
 		}
 		public void action() {
 			caught = ball.catching(wild);
@@ -133,12 +148,12 @@ public class WildBattleControls extends Controller {
 		}
 		public String description() {
 			if(caught){
-				return "1..2..3..Wild " + wild.getName() + " was caught!\n";
+				return P1.getName() + " used " + ball.nome() + "!\n" + "1..2..3..Wild " + wild.getName() + " N°" + wild.getID() + " was caught!\n";
 			}
 			else if(shakeTime < 2){
-				return "Oh, no! The Pokemon broke free!";
+				return P1.getName() + " used " + ball.nome() + "!\n" + "Oh, no! The Pokemon broke free!";
 			}
-			else return "Aww! It appeared to be caught!";
+			else return P1.getName() + " used " + ball.nome() + "!\n" + "Aww! It appeared to be caught!";
 		}
 	}
 	
@@ -148,7 +163,6 @@ public class WildBattleControls extends Controller {
 		}
 		public void action() {
 			return;
-			//n?o sei o que botar aqui
 		}
 		public String description() {
 			return "Got away safely!";
@@ -173,11 +187,8 @@ public class WildBattleControls extends Controller {
 				
 				DEF.getTeamMember(DEF.getPA()).dmgReceived((int)damage);
 				
-				/*message = ATK.getName()+"'s " + ATK.getTeamMember(ATK.getPA()).getName() + " used " + ATK.getTeamMember(ATK.getPA()).moves[i].getMove() +
-						  "!\n" + ATK.getTeamMember(ATK.getPA()).getName() + " dealt " + damage + "damage!\n" + ATK.getTeamMember(ATK.getPA()).getAdvString(ATK.getTeamMember(ATK.getPA()).getAdv(DEF.getTeamMember(DEF.getPA()).getType()));*/
 			}
 			if(DEF.getTeamMember(DEF.getPA()).getFainted()) {
-				//message += DEF.getTeamMember(DEF.getPA()).getName() + " fainted!";
 				addEvent(new SwitchPKMN(System.currentTimeMillis() + 2000, DEF, ATK));
 			}
 		}
@@ -207,110 +218,78 @@ public class WildBattleControls extends Controller {
 	
 	public static void main(String[] args) throws InterruptedException {
 		WildBattleControls bc = new WildBattleControls();
-		Random gerador = new Random();
 		int option = 0;
 		Scanner scan = new Scanner(System.in);
+		Random gerador = new Random();
 		option = bc.choosePlace(bc.Red, scan);
 		Thread.sleep(1000);
 		while(option != 3){
-			bc.addEvent(bc.new MapWalk(System.currentTimeMillis(), option, bc.PokemonList, bc.Wild));
+			bc.addEvent(bc.new MapWalk(System.currentTimeMillis(), option));
 			bc.run();
-			if(bc.Wild.getEncounter()){
-				while(bc.Red.getTeamMember(bc.Red.getPA()).getFainted() == false && bc.Wild.getTeamMember(bc.Wild.getPA()).getFainted() == false && option != 4) {
+			if(bc.encounter){
+				int moveIndexRed = 0;
+				int moveIndexWild = 0;
+				boolean runFromBattle = false;
+				int[] actionsRed = {1, 1, 1, 2, 2};
+				int[] actionsWild = new int[50];
+				for (int i = 0; i < actionsWild.length; i++) {
+					actionsWild[i] = 1;
+					if (i % 10 == 0 && i != 0) actionsWild[i] = 2;
+					if (i == 37) actionsWild[i] = 2;
+				}
+				for (int i = 0; i < actionsRed.length && !runFromBattle && bc.Red.getTeamMember(bc.Red.getPA()).getFainted() == false && bc.Wild.getTeamMember(0).getFainted() == false; i++) {
 					bc.currentStatus(bc.Red, bc.Wild);
-					int RedMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Red
-					int WildMove = gerador.nextInt(4); //sera escolhida uma habilidade aleatoria do pokemon de Wild
-					Thread.sleep(500);
-					option = bc.chooseEvent(bc.Red, scan);
-					Thread.sleep(1000);
-
-					if (option == 1) { 
-						if((bc.Red.getTeamMember(bc.Red.getPA()).moves[RedMove].getPri() == bc.Wild.getTeamMember(bc.Wild.getPA()).moves[WildMove].getPri())) {
-							if(bc.Red.getTeamMember(bc.Red.getPA()).getSpeed() < bc.Wild.getTeamMember(bc.Wild.getPA()).getSpeed()){
-								bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Wild, bc.Red, WildMove));
-								bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Red, bc.Wild, RedMove));
-								bc.run();
-								Thread.sleep(1500);
-							}
-							else {
-								bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Wild, RedMove));
-								bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Wild, bc.Red, WildMove));
-								bc.run();
-								Thread.sleep(1500);
-							}
-						}
-						else if(bc.Red.getTeamMember(bc.Red.getPA()).moves[RedMove].getPri() == true && bc.Wild.getTeamMember(bc.Wild.getPA()).moves[WildMove].getPri() == false){
-							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Wild, RedMove));
-							bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Wild, bc.Red, WildMove));
-							bc.run();
-							Thread.sleep(1500);
+					Thread.sleep(1500);
+					moveIndexRed = bc.changeMove(moveIndexRed);
+					moveIndexWild = bc.changeMove(moveIndexWild);
+					if(actionsRed[i] == 1){
+						if (bc.checkPriority(bc.Red.getTeamMember(bc.Red.getPA()).moves[moveIndexRed].getPri(), bc.Wild.getTeamMember(0).moves[moveIndexWild].getPri(), bc.Red.getTeamMember(bc.Red.getPA()).getSpeed(), bc.Wild.getTeamMember(0).getSpeed())){
+							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Red, bc.Wild, moveIndexRed));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Wild, bc.Red, moveIndexWild));
 						}
 						else {
-							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Wild, bc.Red, WildMove));
-							bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Red, bc.Wild, RedMove));
-							bc.run();
-							Thread.sleep(1500);
+							bc.addEvent(bc.new Fight(System.currentTimeMillis(), bc.Wild, bc.Red, moveIndexWild));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Red, bc.Wild, moveIndexRed));
 						}
 					}
-					else if (option == 2) {
+					if(actionsRed[i] == 2){
+						int b = gerador.nextInt(5);
+						if(b < 2){
+							bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.Red.getItem(b)));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Wild, bc.Red, moveIndexWild));
+						}
+						else {
+							bc.addEvent(bc.new CatchPokemon(System.currentTimeMillis(), bc.Red.getItem(b), bc.Red, bc.Wild));
+							bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Wild, bc.Red, moveIndexWild));
+						}
+					}
+					if(actionsRed[i] == 3) {
 						bc.addEvent(bc.new SwitchPKMN(System.currentTimeMillis(), bc.Red, bc.Wild));
-						bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Wild, bc.Red, WildMove));
-						bc.run();
-						Thread.sleep(1500);
+						bc.addEvent(bc.new Fight(System.currentTimeMillis() + 1500, bc.Wild, bc.Red, moveIndexWild));
 					}
-					else if (option == 3) {
-						bc.showItemOptions();
-						int pot = scan.nextInt();
-						if (pot == 1) {
-							bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.spotion));
-							bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Wild, bc.Red, WildMove));
-						}
-						if (pot == 2) {
-							bc.addEvent(bc.new HealPokemon(System.currentTimeMillis(), bc.Red, bc.hpotion));
-							bc.addEvent(bc.new Fight((System.currentTimeMillis() + 1500), bc.Wild, bc.Red, WildMove));
-						}
-						if (pot == 3) {
-							bc.addEvent(bc.new CatchPokemon(System.currentTimeMillis(), bc.pball, bc.Wild));
-						}
-						if (pot == 4) {
-							bc.addEvent(bc.new CatchPokemon(System.currentTimeMillis(), bc.gball, bc.Wild));
-						}
-						if (pot == 5) {
-							bc.addEvent(bc.new CatchPokemon(System.currentTimeMillis(), bc.mball, bc.Wild));
-						}
-						bc.run();
-						Thread.sleep(1500);
+					if(actionsRed[i] == 4) {
+						bc.addEvent(bc.new Run((System.currentTimeMillis() + 2000)));
+						runFromBattle = true;
 					}
-					else if (option == 4) {
-						bc.addEvent(bc.new Run((System.currentTimeMillis() + 3000)));
-						bc.run();
-					}
-					else {
-						System.out.println("Oak's words echoed...\"There's a time and place for everything, but not now!\"");
+					bc.run();
+					Thread.sleep(2000);
+					System.out.println("***********************************************");
+					if(i == 4){
+						i=-1;
 					}
 				}
 			}
+			bc.encounter = false;
 			Thread.sleep(500);
 			option = bc.choosePlace(bc.Red, scan);
 			Thread.sleep(1000);
 		}
-		
 		scan.close();
-		bc.run();
-		
 	}
 	
 	public void currentStatus(Trainer P1, Trainer P2) {
 		System.out.println(P1.getName() + "\n" + "Active Pokemon: " + P1.getTeamMember(P1.getPA()).getName() + "\nHP: " + P1.getTeamMember(P1.getPA()).getCurrentHP() + "/" + P1.getTeamMember(P1.getPA()).getHP() + "\n");
 		System.out.println(P2.getName() + "\n" + "Active Pokemon: " + P2.getTeamMember(P2.getPA()).getName() + "\nHP: " + P2.getTeamMember(P2.getPA()).getCurrentHP() + "/" + P2.getTeamMember(P2.getPA()).getHP() + "\n");
-	}
-	
-	public int chooseEvent(Trainer P1, Scanner scan) {
-		int opcao;
-		System.out.println("What will " + P1.getTeamMember(P1.getPA()).getName() + " do?");
-		System.out.println("1 - Fight\n2 - Switch Pokemon\n3 - Bag\n4 - Run");
-		opcao = scan.nextInt();
-		return opcao;
 	}
 	
 	public int choosePlace(Trainer P1, Scanner scan) {
@@ -321,9 +300,19 @@ public class WildBattleControls extends Controller {
 		return opcao;
 	}
 	
-	public void showItemOptions() {
-		System.out.println("Which item?\n");
-		System.out.println("1 - Super Potion: Recovers 50 HP\n2 - Hyper Potion - Recovers 200 HP"
-				+ "3 - Poke Ball\n4 - Great Ball\n5 - Master Ball\n");
+	public int changeMove(int i) {
+		i++;
+		if (i == 4)
+			i = 0;
+		return i;
+	}
+	
+	public boolean checkPriority (boolean pri1, boolean pri2, int spd1, int spd2) {
+		if (pri1 == pri2) {
+			if(spd1 >= spd2) return true;
+			else return false;
+		}
+		else if (pri1 && !pri2) return true;
+		else return false;
 	}
 }

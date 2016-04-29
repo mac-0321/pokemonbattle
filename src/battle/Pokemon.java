@@ -26,6 +26,10 @@ public class Pokemon {
 		HPcur = HP;
 	}
 	
+	public int getID() {
+		return ID;
+	}
+	
 	public String getName() {
 		return name;
 	}
