@@ -13,7 +13,7 @@ public class Move {
 	}
 	
 	public double DamageCalculate(int att, int def, double typeAdv) {
-		Random gerador = new Random();
+		Random gerador = new Random(1);
 		int rand = gerador.nextInt(15) + 85;
 		return (((22 * att * damage / def)/50) + 2) * typeAdv * rand/100;
 	}
